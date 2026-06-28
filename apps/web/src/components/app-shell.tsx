@@ -57,8 +57,11 @@ export function AppShell({ children }: AppShellProps) {
     [isHome, search],
   );
   const plans = usePlansStore((state) => state.plans);
-  const counts = getPlanCounts(plans);
-  const projectNames = getSortedProjectNames(counts.byProject);
+  const counts = useMemo(() => getPlanCounts(plans), [plans]);
+  const projectNames = useMemo(
+    () => getSortedProjectNames(counts.byProject),
+    [counts.byProject],
+  );
   const headerTitle = isSettings
     ? "Settings"
     : isHome && filter.type !== "all"

@@ -10,6 +10,26 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("node_modules/@tanstack/react-router")) {
+            return "router";
+          }
+          if (id.includes("node_modules/@tanstack/")) {
+            return "tanstack";
+          }
+          if (id.includes("node_modules/lucide-react")) {
+            return "icons";
+          }
+          if (id.includes("node_modules/react-dom") || id.includes("node_modules/react/")) {
+            return "react";
+          }
+        },
+      },
+    },
+  },
   plugins: [
     tailwindcss(),
     tanstackRouter({

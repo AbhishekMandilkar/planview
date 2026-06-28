@@ -1,1 +1,8 @@
 @import "@planview/ui/globals.css";
+
+@layer components {
+  .plan-list-item {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 4.5rem;
+  }
+}

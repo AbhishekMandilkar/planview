@@ -1,5 +1,7 @@
 import { AGENT_IDS } from "@planview/shared/agents";
+import type { Plan } from "@planview/shared/plan";
 import { createFileRoute } from "@tanstack/react-router";
+import { useCallback } from "react";
 import { z } from "zod";
 
 import Loader from "@/components/loader";
@@ -26,6 +28,12 @@ function HomeComponent() {
   const isScanning = usePlansStore((state) => state.isScanning);
   const selectedPlanId = usePlansStore((state) => state.selectedPlanId);
   const setSelectedPlanId = usePlansStore((state) => state.setSelectedPlanId);
+  const handleSelectPlan = useCallback(
+    (plan: Plan) => {
+      setSelectedPlanId(plan.id);
+    },
+    [setSelectedPlanId],
+  );
 
   if (isLoading) {
     return (
@@ -45,7 +53,7 @@ function HomeComponent() {
         plans={filteredPlans}
         isScanning={isScanning}
         selectedPlanId={selectedPlanId}
-        onSelectPlan={(plan) => setSelectedPlanId(plan.id)}
+        onSelectPlan={handleSelectPlan}
         filterLabel={label}
         hasActiveFilter={hasActiveFilter}
       />

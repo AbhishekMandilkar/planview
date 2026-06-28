@@ -1,3 +1,5 @@
+import { memo } from "react";
+
 import { AGENTS_BY_ID } from "@planview/shared/agents";
 import type { Plan } from "@planview/shared/plan";
 import { cn } from "@planview/ui/lib/utils";
@@ -8,18 +10,22 @@ import { formatRelativeTime } from "@/lib/format-relative-time";
 type PlanListItemProps = {
   plan: Plan;
   isSelected?: boolean;
-  onSelect?: () => void;
+  onSelectPlan?: (plan: Plan) => void;
 };
 
-export function PlanListItem({ plan, isSelected = false, onSelect }: PlanListItemProps) {
+export const PlanListItem = memo(function PlanListItem({
+  plan,
+  isSelected = false,
+  onSelectPlan,
+}: PlanListItemProps) {
   const progress =
     plan.totalTasks > 0 ? Math.round((plan.completedTasks / plan.totalTasks) * 100) : null;
 
   return (
-    <li>
+    <li className="plan-list-item">
       <button
         type="button"
-        onClick={onSelect}
+        onClick={() => onSelectPlan?.(plan)}
         className={cn(
           "flex w-full px-4 py-3.5 text-left transition-colors",
           isSelected ? "bg-accent" : "hover:bg-muted/50",
@@ -58,4 +64,4 @@ export function PlanListItem({ plan, isSelected = false, onSelect }: PlanListIte
       </button>
     </li>
   );
-}
+});

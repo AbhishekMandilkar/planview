@@ -89,7 +89,7 @@ export function PlanList({
             key={plan.id}
             plan={plan}
             isSelected={selectedPlanId === plan.id}
-            onSelect={onSelectPlan ? () => onSelectPlan(plan) : undefined}
+            onSelectPlan={onSelectPlan}
           />
         ))}
       </ul>

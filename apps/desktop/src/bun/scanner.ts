@@ -91,17 +91,24 @@ async function collectScanTargets(config: AppConfig): Promise<string[]> {
   const homeDir = homedir();
   const paths = new Set<string>();
 
-  for (const target of getGlobalScanTargets(homeDir)) {
-    if (await directoryExists(target.directory)) {
+  await Promise.all(
+    getGlobalScanTargets(homeDir).map(async (target) => {
+      if (!(await directoryExists(target.directory))) {
+        return;
+      }
+
       const files = await collectMarkdownFiles(target.directory);
       for (const file of files) {
         paths.add(resolve(file));
       }
-    }
-  }
+    }),
+  );
 
-  for (const target of getProjectScanRoots(config.projectRoots)) {
-    const files = await walkProjectRoot(target.root);
+  const projectFiles = await Promise.all(
+    getProjectScanRoots(config.projectRoots).map((target) => walkProjectRoot(target.root)),
+  );
+
+  for (const files of projectFiles) {
     for (const file of files) {
       paths.add(resolve(file));
     }
@@ -125,18 +132,42 @@ async function readPlanFile(filePath: string, homeDir: string): Promise<Plan | n
   }
 }
 
-export async function scanPlans(config: AppConfig): Promise<Plan[]> {
-  const homeDir = homedir();
-  const filePaths = await collectScanTargets(config);
-  const plans: Plan[] = [];
+const READ_CONCURRENCY = 16;
 
-  for (const filePath of filePaths) {
-    const plan = await readPlanFile(filePath, homeDir);
-    if (plan) {
-      plans.push(plan);
+async function mapWithConcurrency<T, R>(
+  items: readonly T[],
+  concurrency: number,
+  mapper: (item: T) => Promise<R>,
+): Promise<R[]> {
+  if (items.length === 0) {
+    return [];
+  }
+
+  const results = new Array<R>(items.length);
+  let nextIndex = 0;
+
+  async function worker(): Promise<void> {
+    while (nextIndex < items.length) {
+      const index = nextIndex++;
+      results[index] = await mapper(items[index]!);
     }
   }
 
-  plans.sort((left, right) => right.lastModified - left.lastModified);
-  return plans;
+  await Promise.all(
+    Array.from({ length: Math.min(concurrency, items.length) }, () => worker()),
+  );
+
+  return results;
+}
+
+export async function scanPlans(config: AppConfig): Promise<Plan[]> {
+  const homeDir = homedir();
+  const filePaths = await collectScanTargets(config);
+  const parsed = await mapWithConcurrency(filePaths, READ_CONCURRENCY, (filePath) =>
+    readPlanFile(filePath, homeDir),
+  );
+
+  return parsed
+    .filter((plan): plan is Plan => plan !== null)
+    .toSorted((left, right) => right.lastModified - left.lastModified);
 }
