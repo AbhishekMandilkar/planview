@@ -1,8 +1,8 @@
 import { Toaster } from "@planview/ui/components/sonner";
-import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
-import Header from "@/components/header";
+import { AppLayout } from "@/components/app-layout";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppConfigProvider } from "@/hooks/use-app-config";
 
@@ -42,10 +42,7 @@ function RootComponent() {
         disableTransitionOnChange
       >
         <AppConfigProvider>
-          <div className="grid grid-rows-[auto_1fr] h-svh">
-            <Header />
-            <Outlet />
-          </div>
+          <AppLayout />
         </AppConfigProvider>
         <Toaster richColors />
       </ThemeProvider>

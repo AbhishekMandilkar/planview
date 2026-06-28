@@ -48,14 +48,10 @@ function SettingsComponent() {
   };
 
   return (
-    <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Settings</p>
-        <h1 className="text-2xl font-semibold tracking-tight">Project folders</h1>
-        <p className="text-sm text-muted-foreground">
-          Add or remove the directories Planview scans for agent plan files.
-        </p>
-      </div>
+    <div className="mx-auto max-w-xl space-y-6 p-6">
+      <p className="text-sm text-muted-foreground">
+        Add or remove the directories Planview scans for agent plan files.
+      </p>
 
       <ProjectRootsEditor
         roots={projectRoots}

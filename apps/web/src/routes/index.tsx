@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import Loader from "@/components/loader";
 import { Onboarding } from "@/components/onboarding";
-import { ProjectRootsDisplay } from "@/components/project-roots-display";
 import { useAppConfig } from "@/hooks/use-app-config";
 
 export const Route = createFileRoute("/")({
@@ -25,15 +24,12 @@ function HomeComponent() {
   }
 
   return (
-    <div className="container mx-auto max-w-3xl space-y-6 px-4 py-8">
-      <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.24em] text-muted-foreground">Planview</p>
-        <h1 className="text-2xl font-semibold tracking-tight">Your workspace is ready</h1>
-        <p className="text-sm text-muted-foreground">
-          Project roots are saved. The plan scanner arrives in the next phase.
-        </p>
-      </div>
-      <ProjectRootsDisplay roots={projectRoots} />
+    <div className="flex h-full flex-col items-center justify-center px-6 py-12 text-center">
+      <p className="text-sm text-muted-foreground">No plans found yet.</p>
+      <p className="mt-1 max-w-sm text-xs text-muted-foreground/80">
+        Scanning {projectRoots.length} project folder{projectRoots.length === 1 ? "" : "s"}. Plan
+        cards will appear here once the scanner is wired up.
+      </p>
     </div>
   );
 }
