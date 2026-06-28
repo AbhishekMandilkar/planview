@@ -2,6 +2,8 @@ import type { AppConfig } from "./config";
 import type { PlanContent } from "./plan-content";
 import type { Plan } from "./plan";
 
+export type PlanEditor = "cursor" | "vscode";
+
 export type PlanviewRPCSchema = {
   bun: {
     requests: {
@@ -11,7 +13,12 @@ export type PlanviewRPCSchema = {
       scanPlans: { params: void; response: Plan[] };
       readPlanContent: { params: { filePath: string }; response: PlanContent };
       openFile: { params: { filePath: string }; response: void };
+      openFileInEditor: {
+        params: { filePath: string; editor: PlanEditor };
+        response: void;
+      };
       revealInFinder: { params: { filePath: string }; response: void };
+      toggleWindowZoom: { params: void; response: boolean };
     };
     messages: Record<string, never>;
   };

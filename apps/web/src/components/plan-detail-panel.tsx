@@ -1,17 +1,24 @@
-import { AGENTS_BY_ID } from "@planview/shared/agents";
 import type { Plan } from "@planview/shared/plan";
+import type { PlanEditor } from "@planview/shared/rpc";
 import { Button } from "@planview/ui/components/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@planview/ui/components/dropdown-menu";
 import { ScrollArea } from "@planview/ui/components/scroll-area";
 import { Skeleton } from "@planview/ui/components/skeleton";
-import { ExternalLink, FolderOpen } from "lucide-react";
-import { memo } from "react";
+import { ChevronDown, FolderOpen } from "lucide-react";
+import { memo, useCallback } from "react";
 import { toast } from "sonner";
 
+import { CursorIcon } from "@/components/icons/cursor-icon";
+import { VscodeIcon } from "@/components/icons/vscode-icon";
 import { PlanMarkdown } from "@/components/plan-markdown";
+import { TitleBarStrip } from "@/components/title-bar-strip";
 import { usePlanContent } from "@/hooks/use-plan-content";
-import { AgentIcon } from "@/lib/agents";
-import { openFile, revealInFinder } from "@/lib/desktop";
-import { formatRelativeTime } from "@/lib/format-relative-time";
+import { openFileInEditor, revealInFinder } from "@/lib/desktop";
 import { usePlansStore } from "@/stores/plans-store";
 
 type PlanDetailPanelProps = {
@@ -29,29 +36,19 @@ function DetailSkeleton() {
   );
 }
 
-export const PlanDetailPanel = memo(function PlanDetailPanel({ plan }: PlanDetailPanelProps) {
-  const lastScannedAt = usePlansStore((state) => state.lastScannedAt);
-  const { content, isLoading, error, reload } = usePlanContent(plan, lastScannedAt);
+function PlanDetailTitleActions({ plan }: { plan: Plan }) {
+  const handleOpenInEditor = useCallback(
+    async (editor: PlanEditor) => {
+      try {
+        await openFileInEditor(plan.filePath, editor);
+      } catch (openError: unknown) {
+        toast.error(openError instanceof Error ? openError.message : "Could not open this plan.");
+      }
+    },
+    [plan.filePath],
+  );
 
-  if (!plan) {
-    return (
-      <div className="flex flex-1 items-center justify-center p-6">
-        <p className="text-center text-sm text-muted-foreground">
-          Select a plan to view its contents.
-        </p>
-      </div>
-    );
-  }
-
-  const handleOpenInEditor = async () => {
-    try {
-      await openFile(plan.filePath);
-    } catch (openError: unknown) {
-      toast.error(openError instanceof Error ? openError.message : "Could not open this plan.");
-    }
-  };
-
-  const handleRevealInFinder = async () => {
+  const handleRevealInFinder = useCallback(async () => {
     try {
       await revealInFinder(plan.filePath);
     } catch (revealError: unknown) {
@@ -59,25 +56,67 @@ export const PlanDetailPanel = memo(function PlanDetailPanel({ plan }: PlanDetai
         revealError instanceof Error ? revealError.message : "Could not reveal this plan.",
       );
     }
-  };
+  }, [plan.filePath]);
+
+  return (
+    <div className="electrobun-webkit-app-region-no-drag flex shrink-0 items-center gap-1">
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button type="button" variant="outline" size="sm">
+              Open
+              <ChevronDown className="opacity-60" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => void handleOpenInEditor("cursor")}>
+            <CursorIcon className="size-3.5" />
+            Cursor
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => void handleOpenInEditor("vscode")}>
+            <VscodeIcon className="size-3.5" />
+            VS Code
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Button
+        type="button"
+        variant="outline"
+        size="icon-sm"
+        aria-label="Show in Finder"
+        onClick={() => void handleRevealInFinder()}
+      >
+        <FolderOpen />
+      </Button>
+    </div>
+  );
+}
+
+export const PlanDetailPanel = memo(function PlanDetailPanel({ plan }: PlanDetailPanelProps) {
+  const lastScannedAt = usePlansStore((state) => state.lastScannedAt);
+  const { content, isLoading, error, reload } = usePlanContent(plan, lastScannedAt);
+
+  if (!plan) {
+    return (
+      <div className="flex min-h-0 flex-1 flex-col">
+        <TitleBarStrip />
+        <div className="flex flex-1 items-center justify-center p-6">
+          <p className="text-center text-sm text-muted-foreground">
+            Select a plan to view its contents.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <div className="shrink-0 space-y-2 border-b border-border px-4 py-3">
-        <h2 className="text-sm font-semibold leading-snug">{plan.title}</h2>
-        <div className="flex min-w-0 items-center gap-1.5 text-xs text-muted-foreground">
-          <AgentIcon
-            agent={plan.tool}
-            className="size-3 shrink-0"
-            aria-label={AGENTS_BY_ID[plan.tool].label}
-          />
-          <span className="truncate">{plan.project}</span>
-          <span aria-hidden className="text-muted-foreground/50">
-            ·
-          </span>
-          <span className="shrink-0">{formatRelativeTime(plan.lastModified)}</span>
-        </div>
-      </div>
+      <TitleBarStrip className="min-w-0 flex-row items-center justify-between gap-2">
+        <h2 className="min-w-0 flex-1 truncate text-sm font-semibold leading-snug">{plan.title}</h2>
+        <PlanDetailTitleActions plan={plan} />
+      </TitleBarStrip>
 
       <ScrollArea className="min-h-0 flex-1">
         {isLoading ? <DetailSkeleton /> : null}
@@ -95,29 +134,6 @@ export const PlanDetailPanel = memo(function PlanDetailPanel({ plan }: PlanDetai
           </div>
         ) : null}
       </ScrollArea>
-
-      <div className="shrink-0 space-y-2 border-t border-border p-3">
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full justify-start"
-          onClick={handleOpenInEditor}
-        >
-          <ExternalLink className="size-3.5" />
-          Open in editor
-        </Button>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="w-full justify-start"
-          onClick={handleRevealInFinder}
-        >
-          <FolderOpen className="size-3.5" />
-          Show in Finder
-        </Button>
-      </div>
     </div>
   );
 });

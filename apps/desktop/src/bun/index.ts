@@ -1,6 +1,6 @@
 import { BrowserWindow, Updater } from "electrobun/bun";
 
-import { planviewRpc } from "./rpc";
+import { bindMainWindow, planviewRpc } from "./rpc";
 
 const DEV_SERVER_PORT = 3001;
 const DEV_SERVER_URL = `http://localhost:${DEV_SERVER_PORT}`;
@@ -22,11 +22,12 @@ async function getMainViewUrl(): Promise<string> {
 
 const url = await getMainViewUrl();
 
-new BrowserWindow({
+const mainWindow = new BrowserWindow({
   title: "planview",
   url,
   rpc: planviewRpc,
   titleBarStyle: "hiddenInset",
+  trafficLightOffset: { x: 12, y: 14 }, // try different values
   frame: {
     width: 1100,
     height: 680,
@@ -34,5 +35,7 @@ new BrowserWindow({
     y: 120,
   },
 });
+
+bindMainWindow(mainWindow);
 
 console.log("Electrobun desktop shell started.");

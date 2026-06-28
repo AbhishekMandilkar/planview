@@ -6,7 +6,7 @@ import {
 } from "@planview/shared/config";
 import type { PlanContent } from "@planview/shared/plan-content";
 import type { Plan } from "@planview/shared/plan";
-import type { PlanviewRPCSchema } from "@planview/shared/rpc";
+import type { PlanEditor, PlanviewRPCSchema } from "@planview/shared/rpc";
 import { Electroview } from "electrobun/view";
 
 const STORAGE_KEY = "planview-config";
@@ -122,8 +122,24 @@ export async function openFile(filePath: string): Promise<void> {
   }
 }
 
+export async function openFileInEditor(filePath: string, editor: PlanEditor): Promise<void> {
+  if (isDesktop()) {
+    await getRpc().request.openFileInEditor({ filePath, editor });
+    return;
+  }
+
+  throw new Error("Opening in an editor is only available in the desktop app.");
+}
+
 export async function revealInFinder(filePath: string): Promise<void> {
   if (isDesktop()) {
     await getRpc().request.revealInFinder({ filePath });
   }
+}
+
+export async function toggleWindowZoom(): Promise<boolean> {
+  if (isDesktop()) {
+    return getRpc().request.toggleWindowZoom();
+  }
+  return false;
 }

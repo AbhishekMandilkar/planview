@@ -32,6 +32,7 @@ import { useEffect, useMemo } from "react";
 
 import { PlanDetailPanel } from "@/components/plan-detail-panel";
 import { PlanStatusBar } from "@/components/plan-status-bar";
+import { TitleBarStrip } from "@/components/title-bar-strip";
 import { AgentIcon } from "@/lib/agents";
 import { getPlanCounts, getSortedProjectNames } from "@/lib/plan-counts";
 import {
@@ -94,10 +95,7 @@ export function AppShell({ children }: AppShellProps) {
         style={{ "--sidebar-width": SIDEBAR_WIDTH } as CSSProperties}
       >
         <Sidebar collapsible="none" className="h-svh border-r border-sidebar-border">
-          <div
-            className="electrobun-webkit-app-region-drag h-11 shrink-0 border-b border-sidebar-border"
-            aria-hidden
-          />
+          <TitleBarStrip borderClassName="border-sidebar-border" aria-hidden />
 
           <SidebarContent className="electrobun-webkit-app-region-no-drag">
             <SidebarGroup>
@@ -207,13 +205,9 @@ export function AppShell({ children }: AppShellProps) {
         <SidebarInset className="flex min-h-0 flex-col overflow-hidden">
           {isSettings ? (
             <>
-              <header className="flex h-11 shrink-0 border-b border-border">
-                <div className="electrobun-webkit-app-region-drag flex min-w-0 flex-1 items-center px-4">
-                  <div className="electrobun-webkit-app-region-no-drag flex min-w-0 flex-1 items-center gap-3">
-                    <h1 className="shrink-0 text-sm font-medium">{headerTitle}</h1>
-                  </div>
-                </div>
-              </header>
+              <TitleBarStrip>
+                <h1 className="shrink-0 text-sm font-medium">{headerTitle}</h1>
+              </TitleBarStrip>
 
               <div className="min-h-0 flex-1 overflow-auto">{children}</div>
             </>
@@ -228,13 +222,9 @@ export function AppShell({ children }: AppShellProps) {
                   minSize="20%"
                   className="flex min-h-0 flex-col"
                 >
-                  <header className="flex h-11 shrink-0 border-b border-border">
-                    <div className="electrobun-webkit-app-region-drag flex min-w-0 flex-1 items-center px-4">
-                      <div className="electrobun-webkit-app-region-no-drag flex min-w-0 flex-1 items-center gap-3">
-                        <h1 className="shrink-0 text-sm font-medium">{headerTitle}</h1>
-                      </div>
-                    </div>
-                  </header>
+                  <TitleBarStrip>
+                    <h1 className="shrink-0 text-sm font-medium">{headerTitle}</h1>
+                  </TitleBarStrip>
 
                   <div className="min-h-0 flex-1 overflow-auto">{children}</div>
                 </ResizablePanel>
