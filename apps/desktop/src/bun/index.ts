@@ -37,5 +37,6 @@ const mainWindow = new BrowserWindow({
 });
 
 bindMainWindow(mainWindow);
+mainWindow.setPageZoom(1);
 
 console.log("Electrobun desktop shell started.");

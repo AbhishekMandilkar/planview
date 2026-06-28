@@ -2,10 +2,12 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
+import { initDisablePinchZoom } from "./lib/disable-pinch-zoom";
 import { initDesktopBridge } from "./lib/desktop";
 import { routeTree } from "./routeTree.gen";
 
 initDesktopBridge();
+initDisablePinchZoom();
 
 const router = createRouter({
   routeTree,

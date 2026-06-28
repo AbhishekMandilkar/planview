@@ -1,5 +1,10 @@
 @import "@planview/ui/globals.css";
 
+html,
+body {
+  touch-action: manipulation;
+}
+
 @layer components {
   .plan-list-item {
     content-visibility: auto;
