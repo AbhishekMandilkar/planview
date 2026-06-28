@@ -26,6 +26,7 @@ new BrowserWindow({
   title: "planview",
   url,
   rpc: planviewRpc,
+  titleBarStyle: "hiddenInset",
   frame: {
     width: 1100,
     height: 680,
