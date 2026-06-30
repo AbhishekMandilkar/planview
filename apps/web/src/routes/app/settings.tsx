@@ -5,7 +5,7 @@ import Loader from "@/components/loader";
 import { ProjectRootsEditor } from "@/components/project-roots-editor";
 import { useAppConfig } from "@/hooks/use-app-config";
 
-export const Route = createFileRoute("/settings")({
+export const Route = createFileRoute("/app/settings")({
   component: SettingsComponent,
 });
 

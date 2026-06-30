@@ -9,7 +9,7 @@ import {
 } from "@/lib/plan-filter";
 import { usePlansStore } from "@/stores/plans-store";
 
-const homeRouteApi = getRouteApi("/");
+const homeRouteApi = getRouteApi("/app/");
 
 export function usePlanFilter() {
   const search = homeRouteApi.useSearch();

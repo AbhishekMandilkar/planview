@@ -1,7 +1,6 @@
 import { Toaster } from "@planview/ui/components/sonner";
-import { HeadContent, createRootRouteWithContext } from "@tanstack/react-router";
+import { HeadContent, Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 
-import { AppLayout } from "@/components/app-layout";
 import { ThemeProvider } from "@/components/theme-provider";
 import { AppConfigProvider } from "@/hooks/use-app-config";
 
@@ -41,7 +40,7 @@ function RootComponent() {
         disableTransitionOnChange
       >
         <AppConfigProvider>
-          <AppLayout />
+          <Outlet />
         </AppConfigProvider>
         <Toaster richColors />
       </ThemeProvider>

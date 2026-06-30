@@ -3,7 +3,8 @@ import { BrowserWindow, Updater } from "electrobun/bun";
 import { bindMainWindow, planviewRpc } from "./rpc";
 
 const DEV_SERVER_PORT = 3001;
-const DEV_SERVER_URL = `http://localhost:${DEV_SERVER_PORT}`;
+const DEV_SERVER_URL = `http://localhost:${DEV_SERVER_PORT}/#/app`;
+const PACKAGED_VIEW_URL = "views://mainview/index.html#/app";
 
 async function getMainViewUrl(): Promise<string> {
   const channel = await Updater.localInfo.channel();
@@ -17,7 +18,7 @@ async function getMainViewUrl(): Promise<string> {
     }
   }
 
-  return "views://mainview/index.html";
+  return PACKAGED_VIEW_URL;
 }
 
 const url = await getMainViewUrl();

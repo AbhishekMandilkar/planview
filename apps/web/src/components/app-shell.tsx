@@ -40,6 +40,7 @@ import {
   searchForView,
   type HomeSearchParams,
 } from "@/lib/plan-filter";
+import { APP_HOME, APP_SETTINGS, isAppHomePath } from "@/lib/routes";
 import { usePlansStore } from "@/stores/plans-store";
 
 const SIDEBAR_WIDTH = "13.75rem"; // 220px per PRD
@@ -53,8 +54,8 @@ type AppShellProps = {
 export function AppShell({ children }: AppShellProps) {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
   const search = useRouterState({ select: (state) => state.location.search as HomeSearchParams });
-  const isSettings = pathname === "/settings";
-  const isHome = pathname === "/";
+  const isSettings = pathname === APP_SETTINGS;
+  const isHome = isAppHomePath(pathname);
   const filter = useMemo(
     () => (isHome ? parsePlanFilterFromSearch(search) : { type: "all" as const }),
     [isHome, search],
@@ -100,7 +101,7 @@ export function AppShell({ children }: AppShellProps) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       isActive={isHome && isSamePlanFilter(filter, { type: "all" })}
-                      render={<Link to="/" search={ALL_PLANS_SEARCH} />}
+                      render={<Link to={APP_HOME} search={ALL_PLANS_SEARCH} />}
                     >
                       <LayoutList />
                       <span>All</span>
@@ -110,7 +111,7 @@ export function AppShell({ children }: AppShellProps) {
                   <SidebarMenuItem>
                     <SidebarMenuButton
                       isActive={isHome && isSamePlanFilter(filter, { type: "view", view: "recent" })}
-                      render={<Link to="/" search={searchForView("recent")} />}
+                      render={<Link to={APP_HOME} search={searchForView("recent")} />}
                     >
                       <Clock />
                       <span>Recent</span>
@@ -131,7 +132,7 @@ export function AppShell({ children }: AppShellProps) {
                     <SidebarMenuItem key={agent.id}>
                       <SidebarMenuButton
                         isActive={isHome && isSamePlanFilter(filter, { type: "agent", agent: agent.id })}
-                        render={<Link to="/" search={searchForAgent(agent.id)} />}
+                        render={<Link to={APP_HOME} search={searchForAgent(agent.id)} />}
                       >
                         <AgentIcon agent={agent.id} className="size-4 shrink-0" />
                         <span>{agent.label}</span>
@@ -160,7 +161,7 @@ export function AppShell({ children }: AppShellProps) {
                           isActive={
                             isHome && isSamePlanFilter(filter, { type: "project", project })
                           }
-                          render={<Link to="/" search={searchForProject(project)} />}
+                          render={<Link to={APP_HOME} search={searchForProject(project)} />}
                         >
                           <span>{project}</span>
                         </SidebarMenuButton>
@@ -176,7 +177,7 @@ export function AppShell({ children }: AppShellProps) {
           <SidebarFooter className="electrobun-webkit-app-region-no-drag border-t border-sidebar-border">
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton isActive={isSettings} render={<Link to="/settings" />}>
+                <SidebarMenuButton isActive={isSettings} render={<Link to={APP_SETTINGS} />}>
                   <Settings />
                   <span>Settings</span>
                 </SidebarMenuButton>

@@ -1,9 +1,14 @@
-import { RouterProvider, createHashHistory, createRouter } from "@tanstack/react-router";
+import {
+  RouterProvider,
+  createBrowserHistory,
+  createHashHistory,
+  createRouter,
+} from "@tanstack/react-router";
 import ReactDOM from "react-dom/client";
 
 import Loader from "./components/loader";
 import { initDisablePinchZoom } from "./lib/disable-pinch-zoom";
-import { initDesktopBridge } from "./lib/desktop";
+import { initDesktopBridge, isDesktop } from "./lib/desktop";
 import { routeTree } from "./routeTree.gen";
 
 initDesktopBridge();
@@ -11,7 +16,7 @@ initDisablePinchZoom();
 
 const router = createRouter({
   routeTree,
-  history: createHashHistory(),
+  history: isDesktop() ? createHashHistory() : createBrowserHistory(),
   defaultPreload: "intent",
   scrollRestoration: true,
   defaultPendingComponent: () => <Loader />,

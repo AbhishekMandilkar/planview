@@ -5,6 +5,7 @@ import { useState } from "react";
 
 import { ProjectRootsEditor } from "@/components/project-roots-editor";
 import { useAppConfig } from "@/hooks/use-app-config";
+import { APP_HOME } from "@/lib/routes";
 
 export function Onboarding() {
   const navigate = useNavigate();
@@ -17,7 +18,7 @@ export function Onboarding() {
     try {
       await completeOnboarding();
       toast.success("Project folders saved.");
-      await navigate({ to: "/" });
+      await navigate({ to: APP_HOME });
     } catch (submitError: unknown) {
       toast.error(
         submitError instanceof Error ? submitError.message : "Could not save your settings.",
