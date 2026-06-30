@@ -1,73 +1,90 @@
 # Planbase
 
-This project was created with [Better-T-Stack](https://github.com/AmanVarshney01/create-better-t-stack), a modern TypeScript stack that combines React, TanStack Router, and more.
+Find any AI agent plan from two weeks ago in two seconds.
 
-## Features
+Planbase is a macOS desktop app that indexes plan files from Cursor, Claude Code, and your project folders. Search by project, filter by tool, and open plans in your editor. Everything stays on your Mac — no cloud.
 
-- **TypeScript** - For type safety and improved developer experience
-- **TanStack Router** - File-based routing with full type safety
-- **TailwindCSS** - Utility-first CSS for rapid UI development
-- **Shared UI package** - shadcn/ui primitives live in `packages/ui`
-- **Electrobun** - Lightweight desktop shell for web frontends
+## Download
 
-## Getting Started
+**Requirements:** macOS (Apple Silicon)
 
-First, install the dependencies:
+1. Download the latest release from [GitHub Releases](https://github.com/AbhishekMandilkar/planview/releases/latest)
+2. Open the DMG and drag Planbase to Applications
+3. The app is not notarized yet. After installing, run in Terminal:
+
+```bash
+xattr -cr /Applications/Planbase.app
+```
+
+## Development
+
+Requires [Bun](https://bun.sh) 1.3+.
 
 ```bash
 bun install
 ```
 
-Then, run the development server:
+### Web (landing page + app UI)
 
 ```bash
-bun run dev
+bun run dev:web
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser to see the web application.
+Open [http://localhost:5173](http://localhost:5173). The landing page is at `/`; the app UI is at `/app`.
 
-## UI Customization
-
-React web apps in this stack share shadcn/ui primitives through `packages/ui`.
-
-- Change design tokens and global styles in `packages/ui/src/styles/globals.css`
-- Update shared primitives in `packages/ui/src/components/*`
-- Adjust shadcn aliases or style config in `packages/ui/components.json` and `apps/web/components.json`
-
-### Add more shared components
-
-Run this from the project root to add more primitives to the shared UI package:
+### Desktop
 
 ```bash
-npx shadcn@latest add accordion dialog popover sheet table -c packages/ui
+bun run dev:desktop
 ```
 
-Import shared components like this:
+Runs the Electrobun shell with Vite HMR for the web frontend.
 
-```tsx
-import { Button } from "@planview/ui/components/button";
+### Build desktop app
+
+```bash
+bun run build:desktop
 ```
 
-### Add app-specific blocks
+Output goes to `apps/desktop/artifacts/`:
 
-If you want to add app-specific blocks instead of shared primitives, run the shadcn CLI from `apps/web`.
+- `stable-macos-arm64-Planbase.dmg` — installer for GitHub Releases
+- `stable-macos-arm64-Planbase.app.tar.zst` — update bundle
+- `stable-macos-arm64-update.json` — update manifest
 
-## Project Structure
+To publish a release, upload the DMG to [GitHub Releases](https://github.com/AbhishekMandilkar/planview/releases/new). The landing page download button links to `/releases/latest`.
+
+## Project structure
 
 ```
 planview/
 ├── apps/
-│   ├── web/         # Frontend application (React + TanStack Router)
+│   ├── web/         # React + TanStack Router (landing page + app UI)
+│   └── desktop/     # Electrobun shell, filesystem scanner, IPC
 ├── packages/
-│   ├── ui/          # Shared shadcn/ui components and styles
+│   ├── ui/          # Shared shadcn/ui components
+│   ├── shared/      # Shared types and utilities
+│   ├── env/         # Environment validation
+│   └── config/      # Shared TS config
+└── vercel.json      # Web deployment (landing page only)
 ```
 
-## Available Scripts
+## Scripts
 
-- `bun run dev`: Start all applications in development mode
-- `bun run build`: Build all applications
-- `bun run dev:web`: Start only the web application
-- `bun run check-types`: Check TypeScript types across all apps
-- `bun run dev:desktop`: Start the Electrobun desktop app with HMR
-- `bun run build:desktop`: Build the stable Electrobun desktop app
-- `bun run build:desktop:canary`: Build the canary Electrobun desktop app
+| Command | Description |
+|---------|-------------|
+| `bun run dev` | Start all apps in development mode |
+| `bun run dev:web` | Web app only |
+| `bun run dev:desktop` | Desktop app with HMR |
+| `bun run build` | Build all apps |
+| `bun run build:desktop` | Build stable macOS DMG |
+| `bun run build:desktop:canary` | Build canary macOS bundle |
+| `bun run check-types` | Typecheck all packages |
+
+## Tech stack
+
+- **Electrobun** — lightweight desktop shell
+- **React 19 + Vite** — UI
+- **TanStack Router** — file-based routing
+- **Tailwind CSS + shadcn/ui** — styling and components
+- **Bun** — package manager and runtime
