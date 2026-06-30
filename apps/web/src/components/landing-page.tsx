@@ -1,5 +1,5 @@
 import { Button } from "@planview/ui/components/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Info } from "lucide-react";
 
 import { GITHUB_RELEASES_URL } from "@/lib/routes";
 
@@ -79,6 +79,15 @@ export function LandingPage() {
           </Button>
           <p className="mt-2.5 text-xs text-zinc-400 md:text-sm">
             Free, 4MB, local-only
+          </p>
+          <p className="mt-1.5 flex max-w-md items-start gap-1.5 text-[11px] leading-relaxed text-zinc-400 md:text-xs">
+            <Info className="mt-0.5 size-3 shrink-0 md:size-3.5" aria-hidden />
+            <span>
+              Not notarized — after install, run{" "}
+              <code className="rounded bg-zinc-200 px-1 py-0.5 font-mono text-[10px] text-zinc-600">
+                xattr -cr /Applications/Planbase.app
+              </code>
+            </span>
           </p>
 
           <div className="mt-8 flex flex-col gap-4 border-t border-zinc-200 pt-6 md:mt-10 md:gap-5 md:pt-7">
