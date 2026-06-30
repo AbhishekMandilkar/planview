@@ -1,4 +1,5 @@
 import { Button } from "@planview/ui/components/button";
+import { Analytics } from "@vercel/analytics/react";
 import { ArrowRight, Info } from "lucide-react";
 
 import { GITHUB_RELEASES_URL } from "@/lib/routes";
@@ -32,6 +33,7 @@ const features = [
 
 export function LandingPage() {
   return (
+    <>
     <div className="flex h-dvh flex-col overflow-hidden bg-zinc-50 text-zinc-900">
       <header className="flex shrink-0 items-center justify-between px-6 py-4 md:px-10 lg:px-14">
         <span className="motion-safe:animate-fade-up text-sm font-medium tracking-tight">
@@ -119,5 +121,7 @@ export function LandingPage() {
         </div>
       </footer>
     </div>
+    <Analytics />
+    </>
   );
 }
